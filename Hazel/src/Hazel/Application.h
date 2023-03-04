@@ -8,7 +8,7 @@
 #include "Hazel/Events/ApplicationEvent.h"
 
 namespace Hazel {
-
+	  
 
 	class HAZEL_API Application
 		{
