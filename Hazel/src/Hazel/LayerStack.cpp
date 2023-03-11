@@ -31,7 +31,6 @@ namespace Hazel {
 		auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
 		if (it != m_Layers.end())
 		{
-			// this actually doesn't work I think, iterator ivalidated when I test
 			m_Layers.erase(it);
 			m_LayerInsertIndex--;
 		}

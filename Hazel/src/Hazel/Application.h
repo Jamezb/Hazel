@@ -8,6 +8,8 @@
 #include "Hazel/Events/ApplicationEvent.h"
 
 #include "Hazel/ImGui/ImGuiLayer.h"
+#include "Hazel/Renderer/Shader.h"
+#include "Hazel/Renderer/RenderTriangle.h"
 
 namespace Hazel {
 	  
@@ -35,6 +37,11 @@ namespace Hazel {
 			ImGuiLayer* m_ImGuiLayer;
 			bool m_Running = true;
 			LayerStack m_LayerStack;
+			Shader* m_Shader;
+			RenderTriangle* m_Triangle;
+
+			unsigned int m_VertexShader, m_FragmentShader, m_ShaderProgram,
+				m_VertexArray, m_VertexBuffer, m_IndexBuffer;
 
 		private:
 			static Application* s_Instance;

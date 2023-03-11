@@ -49,11 +49,11 @@ namespace Hazel {
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 		Application& app = Application::Get();
-		GLFWwindow* window = (GLFWwindow*)app.GetWindow().GetNativeWindow();
+		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
 		// Setup Platform/Renderer backends
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 130");
+		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -93,7 +93,8 @@ namespace Hazel {
 
 	void ImGuiLayer::OnImGuiRender()
 	{
-		ImGui::ShowDemoWindow();
+		static bool show = true;
+		ImGui::ShowDemoWindow(&show);
 	}
 
 }

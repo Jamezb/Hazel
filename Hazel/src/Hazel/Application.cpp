@@ -7,7 +7,8 @@
 #include <glad/glad.h>
 
 #include "Input.h"
-
+#include "Platform/OpenGL/OpenGLShader.h"
+#include "Platform/OpenGL/OpenGLRenderTriangle.h"
 
 
 namespace Hazel {
@@ -20,15 +21,28 @@ namespace Hazel {
 	{
 		HZ_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
-		// Confused by this
-		// shouldn't I be able to access members of class like m_Data?
-		// or not visible bc private?
+		
 		m_Window = std::unique_ptr<Window>(Window::Create());
-		// set the callback function of m_Window to OnEvent
+		
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
+		// create ImGui layer.
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
+
+		m_Shader = new OpenGLShader();
+
+		float vertices[3 * 3] = {
+			-0.5f, -0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f,
+			 0.0f,  0.5f, 0.0f
+		};
+
+		unsigned int indices[3] = { 0, 1, 2 };
+		
+		m_Triangle = new OpenGLRenderTriangle(vertices, indices,sizeof(vertices),sizeof(indices));
+
+		
 	}
 
 
@@ -46,8 +60,7 @@ namespace Hazel {
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
 			// Changes the value of it while also passing it to OnEvent, this will go last-first layer
-			// Calls the OnEvent for each layer - if handled then break
-			// Currrently layer OnEvent defined in sandbox
+
 			(*--it)->OnEvent(e);
 			if (e.Handled)
 				break;
@@ -58,16 +71,19 @@ namespace Hazel {
 	{
 		while (m_Running) 
 		{
-			glClearColor(1, 0, 1, 1);
+			glClearColor(0.1f, 0.1f, 0.1f, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			m_Shader->UseShader();
+			m_Triangle->DrawVertices();
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
-			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)
+		     m_ImGuiLayer->Begin();
+			 for (Layer* layer : m_LayerStack)
 				layer->OnImGuiRender();
-			m_ImGuiLayer->End();
+			 m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
 		}
